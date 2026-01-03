@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>25.04 20:36</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            flex-direction: column;
+        }
+
+        #snow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .flake {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(110vh); }
+        }
+
+        .wrap {
+            text-align: center;
+            z-index: 2;
+        }
+
+        #timer {
+            font-size: 5rem;
+            font-weight: 100;
+            letter-spacing: -2px;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glitch {
+            font-size: 0.9rem;
+            letter-spacing: 8px;
+            margin-top: 15px;
+            text-transform: uppercase;
+            opacity: 0.4;
+            position: relative;
+            animation: glitch-skew 4s infinite linear alternate-reverse;
+        }
+
+        .glitch::before, .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.8;
+        }
+
+        .glitch::before {
+            color: #ff00c1;
+            z-index: -1;
+            animation: glitch-anim 0.3s infinite linear alternate-reverse;
+        }
+
+        .glitch::after {
+            color: #00fff9;
+            z-index: -2;
+            animation: glitch-anim2 0.3s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-anim {
+            0% { clip: rect(20px, 9999px, 10px, 0); transform: translate(-2px, -2px); }
+            100% { clip: rect(10px, 9999px, 30px, 0); transform: translate(2px, 2px); }
+        }
+
+        @keyframes glitch-anim2 {
+            0% { clip: rect(10px, 9999px, 40px, 0); transform: translate(2px, 2px); }
+            100% { clip: rect(30px, 9999px, 20px, 0); transform: translate(-2px, -2px); }
+        }
+
+        @keyframes glitch-skew {
+            0%, 90% { transform: skew(0deg); }
+            95% { transform: skew(5deg); }
+            100% { transform: skew(-5deg); }
+        }
+
+        @media (max-width: 600px) {
+            #timer { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="snow"></div>
+
+    <div class="wrap">
+        <div id="timer">00:00:00:00</div>
+        <div class="glitch" data-text="AWAITING SEQUENCE">AWAITING SEQUENCE</div>
+    </div>
+
+    <script>
+        const snow = document.getElementById('snow');
+        for (let i = 0; i < 100; i++) {
+            const f = document.createElement('div');
+            f.className = 'flake';
+            const s = Math.random() * 2 + 1 + 'px';
+            f.style.width = s;
+            f.style.height = s;
+            f.style.left = Math.random() * 100 + 'vw';
+            f.style.top = '-10px';
+            f.style.animationDuration = Math.random() * 3 + 4 + 's';
+            f.style.animationDelay = Math.random() * 5 + 's';
+            snow.appendChild(f);
+        }
+
+        const target = new Date("2026-04-25T20:36:00").getTime();
+        const display = document.getElementById("timer");
+
+        function update() {
+            const now = new Date().getTime();
+            const diff = target - now;
+
+            if (diff <= 0) {
+                display.innerText = "00:00:00:00";
+                return;
+            }
+
+            const d = Math.floor(diff / 86400000);
+            const h = Math.floor((diff % 86400000) / 3600000);
+            const m = Math.floor((diff % 3600000) / 60000);
+            const s = Math.floor((diff % 60000) / 1000);
+
+            const pad = (n) => String(n).padStart(2, '0');
+            const val = `${pad(d)}:${pad(h)}:${pad(m)}:${pad(s)}`;
+
+            if (display.innerText !== val) {
+                display.style.opacity = '0.5';
+                display.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    display.innerText = val;
+                    display.style.opacity = '1';
+                    display.style.transform = 'scale(1)';
+                }, 100);
+            }
+        }
+
+        setInterval(update, 1000);
+        update();
+    </script>
+</body>
+</html>
