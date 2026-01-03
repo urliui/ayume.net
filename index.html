@@ -3,165 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>25.04 20:36</title>
+    <title>26.04.2026</title>
     <style>
         body {
             margin: 0;
             padding: 0;
-            background: #000;
-            color: #fff;
-            font-family: 'Inter', sans-serif;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            background-color: #050505;
+            color: #e0e0e0;
+            font-family: 'Courier New', Courier, monospace;
             overflow: hidden;
-            flex-direction: column;
-        }
-
-        #snow {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-        }
-
-        .flake {
-            position: absolute;
-            background: #fff;
-            border-radius: 50%;
-            opacity: 0.5;
-            animation: fall linear infinite;
-        }
-
-        @keyframes fall {
-            to { transform: translateY(110vh); }
-        }
-
-        .wrap {
-            text-align: center;
-            z-index: 2;
+            user-select: none;
         }
 
         #timer {
-            font-size: 5rem;
-            font-weight: 100;
-            letter-spacing: -2px;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: clamp(2rem, 8vw, 4rem);
+            font-weight: 300;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+
+        .glitch-container {
+            position: relative;
+            display: inline-block;
         }
 
         .glitch {
-            font-size: 0.9rem;
-            letter-spacing: 8px;
-            margin-top: 15px;
+            font-size: clamp(1rem, 4vw, 1.5rem);
             text-transform: uppercase;
-            opacity: 0.4;
+            letter-spacing: 5px;
             position: relative;
-            animation: glitch-skew 4s infinite linear alternate-reverse;
+            color: #fff;
         }
 
-        .glitch::before, .glitch::after {
+        .glitch::before,
+        .glitch::after {
             content: attr(data-text);
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            opacity: 0.8;
+            background: #050505;
         }
 
         .glitch::before {
-            color: #ff00c1;
-            z-index: -1;
-            animation: glitch-anim 0.3s infinite linear alternate-reverse;
+            left: 2px;
+            text-shadow: -2px 0 #ff00c1;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim 5s infinite linear alternate-reverse;
         }
 
         .glitch::after {
-            color: #00fff9;
-            z-index: -2;
-            animation: glitch-anim2 0.3s infinite linear alternate-reverse;
+            left: -2px;
+            text-shadow: -2px 0 #00fff9, 2px 2px #ff00c1;
+            animation: glitch-anim2 1s infinite linear alternate-reverse;
         }
 
         @keyframes glitch-anim {
-            0% { clip: rect(20px, 9999px, 10px, 0); transform: translate(-2px, -2px); }
-            100% { clip: rect(10px, 9999px, 30px, 0); transform: translate(2px, 2px); }
+            0% { clip: rect(31px, 9999px, 94px, 0); }
+            20% { clip: rect(62px, 9999px, 42px, 0); }
+            40% { clip: rect(16px, 9999px, 78px, 0); }
+            60% { clip: rect(1px, 9999px, 13px, 0); }
+            80% { clip: rect(53px, 9999px, 86px, 0); }
+            100% { clip: rect(91px, 9999px, 98px, 0); }
         }
 
         @keyframes glitch-anim2 {
-            0% { clip: rect(10px, 9999px, 40px, 0); transform: translate(2px, 2px); }
-            100% { clip: rect(30px, 9999px, 20px, 0); transform: translate(-2px, -2px); }
-        }
-
-        @keyframes glitch-skew {
-            0%, 90% { transform: skew(0deg); }
-            95% { transform: skew(5deg); }
-            100% { transform: skew(-5deg); }
-        }
-
-        @media (max-width: 600px) {
-            #timer { font-size: 2.5rem; }
+            0% { clip: rect(65px, 9999px, 100px, 0); }
+            20% { clip: rect(30px, 9999px, 40px, 0); }
+            40% { clip: rect(10px, 9999px, 80px, 0); }
+            60% { clip: rect(50px, 9999px, 20px, 0); }
+            80% { clip: rect(80px, 9999px, 60px, 0); }
+            100% { clip: rect(0px, 9999px, 10px, 0); }
         }
     </style>
 </head>
 <body>
 
-    <div id="snow"></div>
-
-    <div class="wrap">
-        <div id="timer">00:00:00:00</div>
-        <div class="glitch" data-text="AWAITING SEQUENCE">AWAITING SEQUENCE</div>
+    <div id="timer">00:00:00:00</div>
+    
+    <div class="glitch-container">
+        <div class="glitch" data-text="небеса поют">небеса поют</div>
     </div>
 
     <script>
-        const snow = document.getElementById('snow');
-        for (let i = 0; i < 100; i++) {
-            const f = document.createElement('div');
-            f.className = 'flake';
-            const s = Math.random() * 2 + 1 + 'px';
-            f.style.width = s;
-            f.style.height = s;
-            f.style.left = Math.random() * 100 + 'vw';
-            f.style.top = '-10px';
-            f.style.animationDuration = Math.random() * 3 + 4 + 's';
-            f.style.animationDelay = Math.random() * 5 + 's';
-            snow.appendChild(f);
-        }
+        const targetDate = new Date('2026-04-26T16:27:00+03:00').getTime();
 
-        const target = new Date("2026-04-25T20:36:00").getTime();
-        const display = document.getElementById("timer");
-
-        function update() {
+        function updateTimer() {
             const now = new Date().getTime();
-            const diff = target - now;
+            const distance = targetDate - now;
 
-            if (diff <= 0) {
-                display.innerText = "00:00:00:00";
+            if (distance < 0) {
+                document.getElementById("timer").innerHTML = "00:00:00:00";
                 return;
             }
 
-            const d = Math.floor(diff / 86400000);
-            const h = Math.floor((diff % 86400000) / 3600000);
-            const m = Math.floor((diff % 3600000) / 60000);
-            const s = Math.floor((diff % 60000) / 1000);
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-            const pad = (n) => String(n).padStart(2, '0');
-            const val = `${pad(d)}:${pad(h)}:${pad(m)}:${pad(s)}`;
+            const d = days.toString().padStart(2, '0');
+            const h = hours.toString().padStart(2, '0');
+            const m = minutes.toString().padStart(2, '0');
+            const s = seconds.toString().padStart(2, '0');
 
-            if (display.innerText !== val) {
-                display.style.opacity = '0.5';
-                display.style.transform = 'scale(0.98)';
-                setTimeout(() => {
-                    display.innerText = val;
-                    display.style.opacity = '1';
-                    display.style.transform = 'scale(1)';
-                }, 100);
-            }
+            document.getElementById("timer").innerHTML = `${d}:${h}:${m}:${s}`;
         }
 
-        setInterval(update, 1000);
-        update();
+        setInterval(updateTimer, 1000);
+        updateTimer();
     </script>
 </body>
 </html>
