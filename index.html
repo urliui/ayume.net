@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ayume</title>
+    <title>Ауюми</title>
     <style>
         body {
             margin: 0;
@@ -18,6 +18,22 @@
             font-family: 'Courier New', Courier, monospace;
             overflow: hidden;
             user-select: none;
+        }
+
+        #snow-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
         }
 
         #timer {
@@ -85,10 +101,13 @@
 </head>
 <body>
 
-    <div id="timer">00:00:00:00</div>
-    
-    <div class="glitch-container">
-        <div class="glitch" data-text="небеса поют">небеса поют</div>
+    <canvas id="snow-canvas"></canvas>
+
+    <div class="content">
+        <div id="timer">00:00:00:00</div>
+        <div class="glitch-container">
+            <div class="glitch" data-text="небеса поют">небеса поют</div>
+        </div>
     </div>
 
     <script>
@@ -97,9 +116,10 @@
         function updateTimer() {
             const now = new Date().getTime();
             const distance = targetDate - now;
+            const timerEl = document.getElementById("timer");
 
             if (distance < 0) {
-                document.getElementById("timer").innerHTML = "00:00:00:00";
+                timerEl.innerHTML = "00:00:00:00";
                 return;
             }
 
@@ -108,16 +128,65 @@
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-            const d = days.toString().padStart(2, '0');
-            const h = hours.toString().padStart(2, '0');
-            const m = minutes.toString().padStart(2, '0');
-            const s = seconds.toString().padStart(2, '0');
-
-            document.getElementById("timer").innerHTML = `${d}:${h}:${m}:${s}`;
+            timerEl.innerHTML = 
+                `${days.toString().padStart(2, '0')}:${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         }
 
         setInterval(updateTimer, 1000);
         updateTimer();
+
+        const canvas = document.getElementById('snow-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 1;
+                this.speed = Math.random() * 1 + 0.5;
+                this.velY = this.speed;
+                this.velX = (Math.random() - 0.5) * 0.5;
+            }
+            update() {
+                this.y += this.velY;
+                this.x += this.velX;
+                if (this.y > canvas.height) this.y = -5;
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+            }
+            draw() {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 150; i++) {
+            particles.push(new Particle());
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
     </script>
 </body>
 </html>
